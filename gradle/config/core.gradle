@@ -6,8 +6,8 @@ allprojects {
         /**
          * maven {
             credentials {
-                username = "$System.env.MAVEN_PUBLISHER_USER"
-                password = "$System.env.MAVEN_PUBLISHER_PASSWORD"
+                username = "$username"
+                password = "$password"
             }
             url "${artifactory_release_url}"
         }*/

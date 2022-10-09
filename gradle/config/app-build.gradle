@@ -1,0 +1,36 @@
+apply from: "${project.rootDir}/gradle/config/microservice.gradle"
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
+    implementation 'com.betpawa.logging:core'
+    implementation 'com.betpawa.metrics:metrics-api'
+    implementation 'com.betpawa.metrics:stats-client-jvm'
+
+    implementation 'ch.qos.logback:logback-classic'
+    implementation 'com.google.guava:guava'
+    implementation "com.google.inject:guice:${guice_version}"
+    implementation "org.yaml:snakeyaml:${snakeyaml_version}"
+    implementation 'org.apache.httpcomponents:httpclient'
+    implementation 'com.rabbitmq:amqp-client'
+    implementation "com.ibm.icu:icu4j:${icu4j_version}"
+    implementation name: 'sportradar-odds-sdk-2.0.56-core'
+
+    implementation(platform("io.opentelemetry:opentelemetry-bom:${opentelemetry_version}"))
+    implementation "io.opentelemetry:opentelemetry-api"
+    runtimeOnly "io.opentelemetry.javaagent:opentelemetry-javaagent:${opentelemetry_version}"
+
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+}

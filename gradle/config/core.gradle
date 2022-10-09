@@ -1,0 +1,89 @@
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        //this should be included for private artifactory
+        /**
+         * maven {
+            credentials {
+                username = "$System.env.MAVEN_PUBLISHER_USER"
+                password = "$System.env.MAVEN_PUBLISHER_PASSWORD"
+            }
+            url "${artifactory_release_url}"
+        }*/
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'jacoco'
+    apply plugin: 'io.spring.dependency-management'
+
+    sourceCompatibility = 17
+    targetCompatibility = 17
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencyManagement {
+        imports {
+            //you can add your private bom here too
+            mavenBom("org.springframework.cloud:spring-cloud-dependencies:${spring_cloud_version}")
+            mavenBom("org.junit:junit-bom:${jnuit_bom_version}")
+        }
+    }
+
+    configurations.implementation {
+        exclude group: 'com.betpawa.common', module: 'logging'
+        exclude group: 'org.springframework', module: 'spring-webmvc'
+    }
+
+    dependencies {
+        implementation("javax.inject:javax.inject:${javax_inject_version}")
+        implementation("org.apache.commons:commons-lang3")
+
+        implementation("com.fasterxml.jackson.module:jackson-module-jaxb-annotations")
+        implementation("org.slf4j:slf4j-api")
+
+        implementation("javax.xml.bind:jaxb-api")
+        implementation('org.glassfish.jaxb:jaxb-runtime')
+
+        implementation("javax.annotation:javax.annotation-api")
+
+        compileOnly("org.projectlombok:lombok")
+        annotationProcessor("org.projectlombok:lombok")
+
+        testCompileOnly("org.projectlombok:lombok")
+        testAnnotationProcessor("org.projectlombok:lombok")
+
+        testImplementation('org.junit.jupiter:junit-jupiter-api')
+        testImplementation('org.junit.jupiter:junit-jupiter-engine')
+        testImplementation('org.springframework.boot:spring-boot-starter-test')
+    }
+
+    test {
+        useJUnitPlatform()
+
+        jacoco {
+            excludes += [
+                    '**/gen/**',
+                    '**/generated/**',
+                    '**/grpc'
+            ]
+        }
+    }
+}

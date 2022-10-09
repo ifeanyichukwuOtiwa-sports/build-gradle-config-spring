@@ -1,0 +1,27 @@
+apply plugin: 'com.bmuschko.docker-remote-api'
+apply plugin: 'com.bmuschko.docker-spring-boot-application'
+
+docker {
+    registryCredentials {
+        url = "$docker_registryCredentials_url"
+        username = "$docker_registryCredentials_username"
+        password = "$docker_registryCredentials_password"
+    }
+
+    springBootApplication {
+        baseImage = "eclipse-temurin:17-jdk-alpine"
+    }
+}
+
+dockerBuildImage {
+    images.empty()
+    def gitCommitHash = 'git rev-parse --verify --short HEAD'.execute().text.trim()
+    if (project.hasProperty("releaseBuild")) {
+        images.add("$docker_service_url:${version}")
+        images.add("$docker_service_url:${gitCommitHash}")
+    } else {
+        images.add("$docker_service_url:develop")
+    }
+
+    labels.put("GIT_COMMIT_HASH", gitCommitHash)
+}
